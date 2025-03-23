@@ -1,5 +1,7 @@
 package com.example.testapispring.service;
 
+import com.example.testapispring.exception.DuplicateResourceException;
+import com.example.testapispring.exception.ResourceNotFoundException;
 import com.example.testapispring.model.User;
 import com.example.testapispring.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,15 +28,26 @@ public class UserService {
 
     public User getUserById(Long id) {
         User user = userRepository.findById(id);
-        return user != null ? sanitizeUser(user) : null;
+        if (user == null) {
+            throw new ResourceNotFoundException("User", "id", id);
+        }
+        return sanitizeUser(user);
     }
 
     public User getUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
-        return user != null ? sanitizeUser(user) : null;
+        if (user == null) {
+            throw new ResourceNotFoundException("User", "username", username);
+        }
+        return sanitizeUser(user);
     }
 
     public User createUser(User user) {
+        // Check if username already exists
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            throw new DuplicateResourceException("User", "username", user.getUsername());
+        }
+        
         // Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
@@ -49,7 +62,15 @@ public class UserService {
     public User updateUser(Long id, User userDetails) {
         User existingUser = userRepository.findById(id);
         if (existingUser == null) {
-            return null;
+            throw new ResourceNotFoundException("User", "id", id);
+        }
+
+        // Check if the new username conflicts with another user
+        if (userDetails.getUsername() != null && !userDetails.getUsername().equals(existingUser.getUsername())) {
+            User existingByUsername = userRepository.findByUsername(userDetails.getUsername());
+            if (existingByUsername != null && !existingByUsername.getId().equals(id)) {
+                throw new DuplicateResourceException("User", "username", userDetails.getUsername());
+            }
         }
 
         existingUser.setUsername(userDetails.getUsername());
@@ -68,13 +89,12 @@ public class UserService {
         return sanitizeUser(userRepository.save(existingUser));
     }
 
-    public boolean deleteUser(Long id) {
+    public void deleteUser(Long id) {
         User existingUser = userRepository.findById(id);
         if (existingUser == null) {
-            return false;
+            throw new ResourceNotFoundException("User", "id", id);
         }
         userRepository.deleteById(id);
-        return true;
     }
     
     // Helper method to remove sensitive information like passwords from returned users
