@@ -2,7 +2,7 @@
 
 A Spring Boot REST API example project demonstrating various features and best practices.
 
-## Current Version: v0.3-crud-users
+## Current Version: v0.5-errors
 
 ### Features
 
@@ -17,6 +17,14 @@ A Spring Boot REST API example project demonstrating various features and best p
   - Public endpoints at `/public/users/**`
   - Secured endpoints with JWT at `/secure/users/**`
   - Basic Auth secured endpoints at `/basic-auth/users/**`
+- Product management CRUD operations:
+  - Public endpoints at `/public/products/**`
+  - Secured endpoints with JWT at `/secure/products/**`
+  - Basic Auth secured endpoints at `/basic-auth/products/**`
+- Global exception handling:
+  - Standardized error responses
+  - Custom exceptions for common error scenarios
+  - Centralized error handling across all controllers
 - Maven build configuration
 - Unit tests for controllers and security
 
@@ -123,6 +131,22 @@ Or:
 
 ### Changelog
 
+#### v0.5-errors
+
+- Added global exception handling
+- Created custom exceptions for common error scenarios
+- Standardized error responses across the API
+- Updated services to throw appropriate exceptions
+- Simplified controller implementations
+
+#### v0.4-crud-products
+
+- Added Product model
+- Implemented ProductRepository for data access
+- Added ProductService for business logic
+- Created public, JWT-secured, and Basic Auth-secured Product CRUD endpoints
+- Added unit tests for all endpoints
+
 #### v0.3-crud-users
 
 - Added User model
@@ -148,8 +172,6 @@ Or:
 
 ### Upcoming Features (Planned Milestones)
 
-1. v0.4-crud-products: Product management CRUD operations
-2. v0.5-exception-handling: Global exception handling
-3. v0.6-validation: Input data validation
-4. v0.7-swagger: Swagger UI integration
-5. v0.8-cleanup: Code cleanup and documentation update
+1. v0.6-validation: Input data validation
+2. v0.7-swagger: Swagger UI integration
+3. v0.8-cleanup: Code cleanup and documentation update
