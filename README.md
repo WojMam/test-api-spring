@@ -2,7 +2,7 @@
 
 A Spring Boot REST API example project demonstrating various features and best practices.
 
-## Current Version: v0.7-swagger
+## Current Version: v0.8-cleanup
 
 ### Features
 
@@ -34,6 +34,16 @@ A Spring Boot REST API example project demonstrating various features and best p
   - OpenAPI specification at `/api-docs`
   - Detailed schema information for all models
   - Authentication support in Swagger UI
+- Code Cleanup and Best Practices:
+  - Fixed circular dependencies
+  - Optimized package structure
+  - Consistent coding style
+  - Improved test organization
+- CLI Tool for API Interaction:
+  - Command-line interface for all API operations
+  - Support for authentication, user and product management
+  - Formatted JSON output
+  - Debug mode for troubleshooting
 - Maven build configuration
 - Unit tests for controllers and security
 
@@ -162,6 +172,15 @@ Or:
 
 ### Changelog
 
+#### v0.8-cleanup
+
+- Fixed circular dependencies using @Lazy annotations
+- Improved code organization and structure
+- Standardized coding style across the codebase
+- Enhanced application properties configuration
+- Optimized test execution configuration
+- Updated documentation with detailed setup instructions
+
 #### v0.7-swagger
 
 - Added SpringDoc OpenAPI for API documentation
@@ -222,3 +241,40 @@ Or:
 1. v0.6-validation: Input data validation
 2. v0.7-swagger: Swagger UI integration
 3. v0.8-cleanup: Code cleanup and documentation update
+
+### CLI Tool
+
+A command-line interface tool is provided to interact with the API. For detailed instructions, see [CLI Tool Documentation](tools/cli/README.md).
+
+#### Building the CLI Tool
+
+```bash
+# For Linux/macOS
+cd tools/cli
+./build.sh
+
+# For Windows
+cd tools\cli
+build.bat
+```
+
+#### CLI Tool Features
+
+- Authentication with JWT token
+- User management (list, get, create, update, delete)
+- Product management (list, get, create, update, delete)
+- Colored and formatted JSON output
+- Debug mode for detailed request/response information
+
+#### Example CLI Commands
+
+```bash
+# Authenticate and get a token
+apicli auth login -u admin -p admin123 -s
+
+# List all users
+apicli user list -t YOUR_JWT_TOKEN
+
+# Create a new product
+apicli product create -n "New Product" -d "Product description" -p 19.99 -s 100 -c "Category" -t YOUR_JWT_TOKEN
+```
