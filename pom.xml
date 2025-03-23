@@ -13,7 +13,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>test-api-spring</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>test-api-spring</name>
     <description>Spring Boot REST API Example Project</description>
 

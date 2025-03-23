@@ -2,7 +2,7 @@
 
 A Spring Boot REST API example project demonstrating various features and best practices.
 
-## Current Version: v0.2-auth
+## Current Version: v0.3-crud-users
 
 ### Features
 
@@ -13,6 +13,10 @@ A Spring Boot REST API example project demonstrating various features and best p
   - Secured endpoints with JWT at `/secure/**`
   - Secured endpoints with Basic Auth at `/basic-auth/**`
   - Public endpoints at `/public/**`
+- User management CRUD operations:
+  - Public endpoints at `/public/users/**`
+  - Secured endpoints with JWT at `/secure/users/**`
+  - Basic Auth secured endpoints at `/basic-auth/users/**`
 - Maven build configuration
 - Unit tests for controllers and security
 
@@ -48,13 +52,31 @@ mvn test
   - GET `/public/health` - Health check endpoint
   - GET `/public/message` - Public message endpoint
   - POST `/auth/login` - Authentication endpoint to get JWT token
+  - GET `/public/users` - Get all users
+  - GET `/public/users/{id}` - Get user by ID
+  - GET `/public/users/username/{username}` - Get user by username
+  - POST `/public/users` - Create new user
+  - PUT `/public/users/{id}` - Update user
+  - DELETE `/public/users/{id}` - Delete user
 
 - **JWT-Secured Endpoints (Requires JWT Token)**:
 
   - GET `/secure/message` - Secured message endpoint with JWT
+  - GET `/secure/users` - Get all users (JWT secured)
+  - GET `/secure/users/{id}` - Get user by ID (JWT secured)
+  - GET `/secure/users/username/{username}` - Get user by username (JWT secured)
+  - POST `/secure/users` - Create new user (JWT secured)
+  - PUT `/secure/users/{id}` - Update user (JWT secured)
+  - DELETE `/secure/users/{id}` - Delete user (JWT secured)
 
 - **Basic Auth-Secured Endpoints (Requires Username/Password)**:
   - GET `/basic-auth/message` - Secured message endpoint with Basic Auth
+  - GET `/basic-auth/users` - Get all users (Basic Auth secured)
+  - GET `/basic-auth/users/{id}` - Get user by ID (Basic Auth secured)
+  - GET `/basic-auth/users/username/{username}` - Get user by username (Basic Auth secured)
+  - POST `/basic-auth/users` - Create new user (Basic Auth secured)
+  - PUT `/basic-auth/users/{id}` - Update user (Basic Auth secured)
+  - DELETE `/basic-auth/users/{id}` - Delete user (Basic Auth secured)
 
 ### Authentication
 
@@ -87,7 +109,27 @@ Or:
 - Username: user
 - Password: user
 
+### User Model
+
+```json
+{
+	"id": 1,
+	"username": "john_doe",
+	"password": "password123", // Only required when creating/updating, not returned in responses
+	"email": "john.doe@example.com",
+	"role": "ROLE_USER"
+}
+```
+
 ### Changelog
+
+#### v0.3-crud-users
+
+- Added User model
+- Implemented UserRepository for data access
+- Added UserService for business logic
+- Created public, JWT-secured, and Basic Auth-secured User CRUD endpoints
+- Added unit tests for all endpoints
 
 #### v0.2-auth
 
@@ -106,9 +148,8 @@ Or:
 
 ### Upcoming Features (Planned Milestones)
 
-1. v0.3-crud-users: User management CRUD operations
-2. v0.4-crud-products: Product management CRUD operations
-3. v0.5-exception-handling: Global exception handling
-4. v0.6-validation: Input data validation
-5. v0.7-swagger: Swagger UI integration
-6. v0.8-cleanup: Code cleanup and documentation update
+1. v0.4-crud-products: Product management CRUD operations
+2. v0.5-exception-handling: Global exception handling
+3. v0.6-validation: Input data validation
+4. v0.7-swagger: Swagger UI integration
+5. v0.8-cleanup: Code cleanup and documentation update
