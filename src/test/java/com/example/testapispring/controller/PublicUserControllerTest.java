@@ -3,13 +3,15 @@ package com.example.testapispring.controller;
 import com.example.testapispring.model.User;
 import com.example.testapispring.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,28 +19,27 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PublicUserController.class)
+@ExtendWith(MockitoExtension.class)
 class PublicUserControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private UserService userService;
     
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private PublicUserController controller;
     
-    @MockBean
-    private com.example.testapispring.security.JwtAuthenticationFilter jwtAuthenticationFilter;
-    
-    @MockBean
-    private com.example.testapispring.security.CustomUserDetailsService customUserDetailsService;
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
 
     @Test
     void getAllUsers_ShouldReturnAllUsers() throws Exception {
@@ -47,7 +48,7 @@ class PublicUserControllerTest {
         User user2 = new User(2L, "user2", null, "user2@example.com", "ROLE_USER");
         List<User> users = Arrays.asList(user1, user2);
         
-        given(userService.getAllUsers()).willReturn(users);
+        when(userService.getAllUsers()).thenReturn(users);
 
         // When & Then
         mockMvc.perform(get("/public/users"))
@@ -64,7 +65,7 @@ class PublicUserControllerTest {
     void getUserById_WhenUserExists_ShouldReturnUser() throws Exception {
         // Given
         User user = new User(1L, "user1", null, "user1@example.com", "ROLE_USER");
-        given(userService.getUserById(1L)).willReturn(user);
+        when(userService.getUserById(1L)).thenReturn(user);
 
         // When & Then
         mockMvc.perform(get("/public/users/1"))
@@ -78,7 +79,7 @@ class PublicUserControllerTest {
     @Test
     void getUserById_WhenUserDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        given(userService.getUserById(999L)).willReturn(null);
+        when(userService.getUserById(999L)).thenReturn(null);
 
         // When & Then
         mockMvc.perform(get("/public/users/999"))
@@ -91,7 +92,7 @@ class PublicUserControllerTest {
         User inputUser = new User(null, "newuser", "password", "newuser@example.com", null);
         User createdUser = new User(3L, "newuser", null, "newuser@example.com", "ROLE_USER");
         
-        given(userService.createUser(any(User.class))).willReturn(createdUser);
+        when(userService.createUser(any(User.class))).thenReturn(createdUser);
 
         // When & Then
         mockMvc.perform(post("/public/users")
@@ -110,7 +111,7 @@ class PublicUserControllerTest {
         User inputUser = new User(null, "updateduser", null, "updated@example.com", null);
         User updatedUser = new User(1L, "updateduser", null, "updated@example.com", "ROLE_USER");
         
-        given(userService.updateUser(eq(1L), any(User.class))).willReturn(updatedUser);
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
 
         // When & Then
         mockMvc.perform(put("/public/users/1")
@@ -128,7 +129,7 @@ class PublicUserControllerTest {
         // Given
         User inputUser = new User(null, "updateduser", null, "updated@example.com", null);
         
-        given(userService.updateUser(eq(999L), any(User.class))).willReturn(null);
+        when(userService.updateUser(eq(999L), any(User.class))).thenReturn(null);
 
         // When & Then
         mockMvc.perform(put("/public/users/999")
@@ -140,7 +141,7 @@ class PublicUserControllerTest {
     @Test
     void deleteUser_WhenUserExists_ShouldReturnNoContent() throws Exception {
         // Given
-        given(userService.deleteUser(1L)).willReturn(true);
+        when(userService.deleteUser(1L)).thenReturn(true);
 
         // When & Then
         mockMvc.perform(delete("/public/users/1"))
@@ -150,7 +151,7 @@ class PublicUserControllerTest {
     @Test
     void deleteUser_WhenUserDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        given(userService.deleteUser(999L)).willReturn(false);
+        when(userService.deleteUser(999L)).thenReturn(false);
 
         // When & Then
         mockMvc.perform(delete("/public/users/999"))

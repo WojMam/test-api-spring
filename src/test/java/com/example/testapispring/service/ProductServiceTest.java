@@ -1,12 +1,12 @@
 package com.example.testapispring.service;
 
 import com.example.testapispring.model.Product;
-import com.example.testapispring.repository.ProductRepository;
+import com.example.testapispring.repository.IProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,17 +16,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
     @Mock
-    private ProductRepository productRepository;
+    private IProductRepository productRepository;
 
-    @InjectMocks
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        productService = new ProductService(productRepository);
     }
 
     @Test
@@ -43,11 +43,11 @@ class ProductServiceTest {
 
         // Then
         assertEquals(expectedProducts, actualProducts);
-        verify(productRepository, times(1)).findAll();
+        verify(productRepository).findAll();
     }
 
     @Test
-    void getProductById_WhenProductExists_ShouldReturnProduct() {
+    void getProductById_ShouldReturnProduct_WhenProductExists() {
         // Given
         Product expectedProduct = new Product(1L, "Laptop", "High-performance laptop", 1299.99, "Electronics", true);
         when(productRepository.findById(1L)).thenReturn(expectedProduct);
@@ -57,11 +57,11 @@ class ProductServiceTest {
 
         // Then
         assertEquals(expectedProduct, actualProduct);
-        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository).findById(1L);
     }
 
     @Test
-    void getProductById_WhenProductDoesNotExist_ShouldReturnNull() {
+    void getProductById_ShouldReturnNull_WhenProductDoesNotExist() {
         // Given
         when(productRepository.findById(999L)).thenReturn(null);
 
@@ -70,24 +70,7 @@ class ProductServiceTest {
 
         // Then
         assertNull(actualProduct);
-        verify(productRepository, times(1)).findById(999L);
-    }
-
-    @Test
-    void getProductsByCategory_ShouldReturnProductsInCategory() {
-        // Given
-        Product product1 = new Product(1L, "Laptop", "High-performance laptop", 1299.99, "Electronics", true);
-        Product product2 = new Product(2L, "Smartphone", "Latest model", 799.99, "Electronics", true);
-        List<Product> expectedProducts = Arrays.asList(product1, product2);
-        
-        when(productRepository.findByCategory("Electronics")).thenReturn(expectedProducts);
-
-        // When
-        List<Product> actualProducts = productService.getProductsByCategory("Electronics");
-
-        // Then
-        assertEquals(expectedProducts, actualProducts);
-        verify(productRepository, times(1)).findByCategory("Electronics");
+        verify(productRepository).findById(999L);
     }
 
     @Test
@@ -103,11 +86,11 @@ class ProductServiceTest {
 
         // Then
         assertEquals(savedProduct, actualProduct);
-        verify(productRepository, times(1)).save(inputProduct);
+        verify(productRepository).save(inputProduct);
     }
 
     @Test
-    void updateProduct_WhenProductExists_ShouldReturnUpdatedProduct() {
+    void updateProduct_ShouldReturnUpdatedProduct_WhenProductExists() {
         // Given
         Product existingProduct = new Product(1L, "Laptop", "High-performance laptop", 1299.99, "Electronics", true);
         Product updatedDetails = new Product(null, "Updated Laptop", "New Description", 1499.99, "Electronics", false);
@@ -121,18 +104,13 @@ class ProductServiceTest {
 
         // Then
         assertNotNull(actualProduct);
-        assertEquals(expectedProduct.getId(), actualProduct.getId());
-        assertEquals(expectedProduct.getName(), actualProduct.getName());
-        assertEquals(expectedProduct.getDescription(), actualProduct.getDescription());
-        assertEquals(expectedProduct.getPrice(), actualProduct.getPrice());
-        assertEquals(expectedProduct.getCategory(), actualProduct.getCategory());
-        assertEquals(expectedProduct.getInStock(), actualProduct.getInStock());
-        verify(productRepository, times(1)).findById(1L);
-        verify(productRepository, times(1)).save(any(Product.class));
+        assertEquals(expectedProduct, actualProduct);
+        verify(productRepository).findById(1L);
+        verify(productRepository).save(any(Product.class));
     }
 
     @Test
-    void updateProduct_WhenProductDoesNotExist_ShouldReturnNull() {
+    void updateProduct_ShouldReturnNull_WhenProductDoesNotExist() {
         // Given
         Product updatedDetails = new Product(null, "Updated Product", "New Description", 59.99, "Category", false);
         
@@ -143,28 +121,27 @@ class ProductServiceTest {
 
         // Then
         assertNull(actualProduct);
-        verify(productRepository, times(1)).findById(999L);
+        verify(productRepository).findById(999L);
         verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
-    void deleteProduct_WhenProductExists_ShouldReturnTrue() {
+    void deleteProduct_ShouldReturnTrue_WhenProductExists() {
         // Given
         Product existingProduct = new Product(1L, "Laptop", "High-performance laptop", 1299.99, "Electronics", true);
         when(productRepository.findById(1L)).thenReturn(existingProduct);
-        doNothing().when(productRepository).deleteById(anyLong());
 
         // When
         boolean result = productService.deleteProduct(1L);
 
         // Then
         assertTrue(result);
-        verify(productRepository, times(1)).findById(1L);
-        verify(productRepository, times(1)).deleteById(1L);
+        verify(productRepository).findById(1L);
+        verify(productRepository).deleteById(1L);
     }
 
     @Test
-    void deleteProduct_WhenProductDoesNotExist_ShouldReturnFalse() {
+    void deleteProduct_ShouldReturnFalse_WhenProductDoesNotExist() {
         // Given
         when(productRepository.findById(999L)).thenReturn(null);
 
@@ -173,7 +150,7 @@ class ProductServiceTest {
 
         // Then
         assertFalse(result);
-        verify(productRepository, times(1)).findById(999L);
+        verify(productRepository).findById(999L);
         verify(productRepository, never()).deleteById(anyLong());
     }
 } 

@@ -1,7 +1,7 @@
 package com.example.testapispring.service;
 
 import com.example.testapispring.model.Product;
-import com.example.testapispring.repository.ProductRepository;
+import com.example.testapispring.repository.IProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final IProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(IProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

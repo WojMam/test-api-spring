@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class ProductRepository {
+public class ProductRepository implements IProductRepository {
 
     private final Map<Long, Product> products = new HashMap<>();
     private final AtomicLong idCounter = new AtomicLong(0);
@@ -37,20 +37,24 @@ public class ProductRepository {
         products.put(product.getId(), product);
     }
 
+    @Override
     public List<Product> findAll() {
         return new ArrayList<>(products.values());
     }
 
+    @Override
     public Product findById(Long id) {
         return products.get(id);
     }
 
+    @Override
     public List<Product> findByCategory(String category) {
         return products.values().stream()
                 .filter(product -> category.equals(product.getCategory()))
                 .toList();
     }
 
+    @Override
     public Product save(Product product) {
         if (product.getId() == null) {
             product.setId(idCounter.incrementAndGet());
@@ -59,6 +63,7 @@ public class ProductRepository {
         return product;
     }
 
+    @Override
     public void deleteById(Long id) {
         products.remove(id);
     }
