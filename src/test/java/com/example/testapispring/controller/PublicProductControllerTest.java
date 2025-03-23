@@ -1,5 +1,7 @@
 package com.example.testapispring.controller;
 
+import com.example.testapispring.exception.GlobalExceptionHandler;
+import com.example.testapispring.exception.ResourceNotFoundException;
 import com.example.testapispring.model.Product;
 import com.example.testapispring.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +22,11 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class PublicProductControllerTest {
@@ -39,7 +43,10 @@ class PublicProductControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(controller)
+            .setControllerAdvice(new GlobalExceptionHandler())
+            .build();
     }
 
     @Test
@@ -80,7 +87,8 @@ class PublicProductControllerTest {
     @Test
     void getProductById_WhenProductDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        when(productService.getProductById(999L)).thenReturn(null);
+        doThrow(new ResourceNotFoundException("Product", "id", 999L))
+            .when(productService).getProductById(999L);
 
         // When & Then
         mockMvc.perform(get("/public/products/999"))
@@ -147,7 +155,8 @@ class PublicProductControllerTest {
         // Given
         Product inputProduct = new Product(null, "Updated Product", "New Description", 59.99, "Category", false);
         
-        when(productService.updateProduct(eq(999L), any(Product.class))).thenReturn(null);
+        doThrow(new ResourceNotFoundException("Product", "id", 999L))
+            .when(productService).updateProduct(eq(999L), any(Product.class));
 
         // When & Then
         mockMvc.perform(put("/public/products/999")
@@ -159,7 +168,7 @@ class PublicProductControllerTest {
     @Test
     void deleteProduct_WhenProductExists_ShouldReturnNoContent() throws Exception {
         // Given
-        when(productService.deleteProduct(1L)).thenReturn(true);
+        doNothing().when(productService).deleteProduct(1L);
 
         // When & Then
         mockMvc.perform(delete("/public/products/1"))
@@ -169,7 +178,8 @@ class PublicProductControllerTest {
     @Test
     void deleteProduct_WhenProductDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        when(productService.deleteProduct(999L)).thenReturn(false);
+        doThrow(new ResourceNotFoundException("Product", "id", 999L))
+            .when(productService).deleteProduct(999L);
 
         // When & Then
         mockMvc.perform(delete("/public/products/999"))

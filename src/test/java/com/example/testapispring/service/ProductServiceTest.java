@@ -1,5 +1,6 @@
 package com.example.testapispring.service;
 
+import com.example.testapispring.exception.ResourceNotFoundException;
 import com.example.testapispring.model.Product;
 import com.example.testapispring.repository.IProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,15 +62,15 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductById_ShouldReturnNull_WhenProductDoesNotExist() {
+    void getProductById_WhenProductDoesNotExist_ShouldThrowResourceNotFoundException() {
         // Given
         when(productRepository.findById(999L)).thenReturn(null);
 
-        // When
-        Product actualProduct = productService.getProductById(999L);
-
-        // Then
-        assertNull(actualProduct);
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.getProductById(999L);
+        });
+        
         verify(productRepository).findById(999L);
     }
 
@@ -110,46 +111,44 @@ class ProductServiceTest {
     }
 
     @Test
-    void updateProduct_ShouldReturnNull_WhenProductDoesNotExist() {
+    void updateProduct_WhenProductDoesNotExist_ShouldThrowResourceNotFoundException() {
         // Given
-        Product updatedDetails = new Product(null, "Updated Product", "New Description", 59.99, "Category", false);
-        
+        Product updatedDetails = new Product(999L, "Updated Laptop", "Updated description", 1499.99, "Electronics", true);
         when(productRepository.findById(999L)).thenReturn(null);
 
-        // When
-        Product actualProduct = productService.updateProduct(999L, updatedDetails);
-
-        // Then
-        assertNull(actualProduct);
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.updateProduct(999L, updatedDetails);
+        });
+        
         verify(productRepository).findById(999L);
         verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
-    void deleteProduct_ShouldReturnTrue_WhenProductExists() {
+    void deleteProduct_WhenProductExists_ShouldDeleteSuccessfully() {
         // Given
         Product existingProduct = new Product(1L, "Laptop", "High-performance laptop", 1299.99, "Electronics", true);
         when(productRepository.findById(1L)).thenReturn(existingProduct);
 
         // When
-        boolean result = productService.deleteProduct(1L);
+        productService.deleteProduct(1L);
 
         // Then
-        assertTrue(result);
         verify(productRepository).findById(1L);
         verify(productRepository).deleteById(1L);
     }
 
     @Test
-    void deleteProduct_ShouldReturnFalse_WhenProductDoesNotExist() {
+    void deleteProduct_WhenProductDoesNotExist_ShouldThrowResourceNotFoundException() {
         // Given
         when(productRepository.findById(999L)).thenReturn(null);
 
-        // When
-        boolean result = productService.deleteProduct(999L);
-
-        // Then
-        assertFalse(result);
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.deleteProduct(999L);
+        });
+        
         verify(productRepository).findById(999L);
         verify(productRepository, never()).deleteById(anyLong());
     }

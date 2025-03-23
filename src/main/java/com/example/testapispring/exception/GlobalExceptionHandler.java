@@ -2,6 +2,7 @@ package com.example.testapispring.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -78,12 +79,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
     
-    // Handle validation errors
+    // Handle validation errors - override the parent method
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, 
             HttpHeaders headers, 
-            HttpStatus status, 
+            HttpStatusCode status, 
             WebRequest request) {
         
         ErrorResponse error = new ErrorResponse(
@@ -113,4 +114,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-} 
+}

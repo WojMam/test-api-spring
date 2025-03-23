@@ -1,5 +1,7 @@
 package com.example.testapispring.controller;
 
+import com.example.testapispring.exception.GlobalExceptionHandler;
+import com.example.testapispring.exception.ResourceNotFoundException;
 import com.example.testapispring.model.User;
 import com.example.testapispring.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +24,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class SecureUserControllerTest {
@@ -38,7 +42,10 @@ class SecureUserControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(controller)
+            .setControllerAdvice(new GlobalExceptionHandler())
+            .build();
     }
 
     @Test
@@ -79,7 +86,8 @@ class SecureUserControllerTest {
     @Test
     void getUserById_WhenUserDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        when(userService.getUserById(999L)).thenReturn(null);
+        doThrow(new ResourceNotFoundException("User", "id", 999L))
+            .when(userService).getUserById(999L);
 
         // When & Then
         mockMvc.perform(get("/secure/users/999"))
@@ -127,9 +135,10 @@ class SecureUserControllerTest {
     @Test
     void updateUser_WhenUserDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        User inputUser = new User(null, "updateduser", null, "updated@example.com", null);
+        User inputUser = new User(null, "updated.user", "password", "updated.email@example.com", "USER");
         
-        when(userService.updateUser(eq(999L), any(User.class))).thenReturn(null);
+        doThrow(new ResourceNotFoundException("User", "id", 999L))
+            .when(userService).updateUser(eq(999L), any(User.class));
 
         // When & Then
         mockMvc.perform(put("/secure/users/999")
@@ -141,17 +150,18 @@ class SecureUserControllerTest {
     @Test
     void deleteUser_WhenUserExists_ShouldReturnNoContent() throws Exception {
         // Given
-        when(userService.deleteUser(1L)).thenReturn(true);
+        doNothing().when(userService).deleteUser(1L);
 
         // When & Then
         mockMvc.perform(delete("/secure/users/1"))
                 .andExpect(status().isNoContent());
     }
-    
+
     @Test
     void deleteUser_WhenUserDoesNotExist_ShouldReturnNotFound() throws Exception {
         // Given
-        when(userService.deleteUser(999L)).thenReturn(false);
+        doThrow(new ResourceNotFoundException("User", "id", 999L))
+            .when(userService).deleteUser(999L);
 
         // When & Then
         mockMvc.perform(delete("/secure/users/999"))
