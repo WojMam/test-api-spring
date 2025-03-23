@@ -2,6 +2,7 @@ package com.example.testapispring.repository;
 
 import com.example.testapispring.model.User;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ public class UserRepository {
     private final AtomicLong idCounter = new AtomicLong(0);
     private final PasswordEncoder passwordEncoder;
 
-    public UserRepository(PasswordEncoder passwordEncoder) {
+    public UserRepository(@Lazy PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 

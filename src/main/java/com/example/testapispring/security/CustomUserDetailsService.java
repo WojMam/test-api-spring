@@ -2,6 +2,7 @@ package com.example.testapispring.security;
 
 import com.example.testapispring.model.User;
 import com.example.testapispring.repository.UserRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(@Lazy UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

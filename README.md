@@ -56,6 +56,28 @@ mvn spring-boot:run
 
 The application will start on port 8080 by default.
 
+### Using Swagger UI
+
+After starting the application, you can access the interactive API documentation at:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+The Swagger UI provides:
+
+- A complete listing of all API endpoints grouped by controller
+- Interactive testing of API endpoints directly from the browser
+- Detailed model schemas and request/response examples
+- Support for authentication via JWT tokens and Basic Auth
+- Ability to download the OpenAPI specification
+
+For raw OpenAPI specification in JSON format, visit:
+
+```
+http://localhost:8080/api-docs
+```
+
 ### Testing
 
 ```bash
