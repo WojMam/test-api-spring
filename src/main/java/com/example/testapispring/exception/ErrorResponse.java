@@ -1,5 +1,6 @@
 package com.example.testapispring.exception;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +10,29 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Standard error response object for API errors
+ * Standard error response format for all API errors
  */
 @JsonInclude(Include.NON_NULL)
+@Schema(description = "Standard error response format for all API errors")
 public class ErrorResponse {
     
+    @Schema(description = "HTTP status code", example = "400")
+    private int status;
+    
+    @Schema(description = "Error type", example = "Bad Request")
+    private String error;
+    
+    @Schema(description = "Error message", example = "Validation failed")
+    private String message;
+    
+    @Schema(description = "Timestamp of when the error occurred", example = "2023-03-23T15:30:45.123")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
-    private int status;
-    private String error;
-    private String message;
+    
+    @Schema(description = "Path that caused the error", example = "/api/users")
     private String path;
+    
+    @Schema(description = "List of validation errors when applicable")
     private List<ValidationError> validationErrors;
     
     public ErrorResponse() {
@@ -117,4 +130,4 @@ public class ErrorResponse {
     public void setValidationErrors(List<ValidationError> validationErrors) {
         this.validationErrors = validationErrors;
     }
-} 
+}

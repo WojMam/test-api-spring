@@ -1,7 +1,6 @@
 package com.example.testapispring.controller;
 
 import com.example.testapispring.model.AuthenticationRequest;
-import com.example.testapispring.security.CustomUserDetailsService;
 import com.example.testapispring.security.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +37,6 @@ class AuthControllerTest {
     @Mock
     private JwtUtils jwtUtils;
 
-    @Mock
-    private CustomUserDetailsService userDetailsService;
-
     @InjectMocks
     private AuthController authController;
 
@@ -52,15 +48,14 @@ class AuthControllerTest {
     }
 
     @Test
-    void authenticate_WithValidCredentials_ShouldReturnToken() throws Exception {
+    void login_WithValidCredentials_ShouldReturnToken() throws Exception {
         // Given
         AuthenticationRequest request = new AuthenticationRequest("admin", "admin");
-        Authentication auth = new UsernamePasswordAuthenticationToken("admin", null, Collections.emptyList());
         UserDetails userDetails = new User("admin", "admin", Collections.emptyList());
+        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, Collections.emptyList());
         
         when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(auth);
-        when(userDetailsService.loadUserByUsername("admin")).thenReturn(userDetails);
-        when(jwtUtils.generateToken("admin")).thenReturn("test-jwt-token");
+        when(jwtUtils.generateToken(userDetails)).thenReturn("test-jwt-token");
 
         // When & Then
         mockMvc.perform(post("/auth/login")

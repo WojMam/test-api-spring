@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .requestMatchers("/public/**", "/auth/**").permitAll()
                 .requestMatchers("/secure/**").authenticated()
                 .requestMatchers("/basic-auth/**").authenticated()
+                // Permit access to Swagger UI and API docs
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**").permitAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .httpBasic(httpBasic -> httpBasic.realmName("Basic Auth Realm"))

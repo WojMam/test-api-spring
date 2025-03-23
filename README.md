@@ -2,7 +2,7 @@
 
 A Spring Boot REST API example project demonstrating various features and best practices.
 
-## Current Version: v0.5-errors
+## Current Version: v0.7-swagger
 
 ### Features
 
@@ -25,6 +25,15 @@ A Spring Boot REST API example project demonstrating various features and best p
   - Standardized error responses
   - Custom exceptions for common error scenarios
   - Centralized error handling across all controllers
+- Input validation:
+  - Bean validation with Jakarta Validation
+  - Group validation for different operations (create vs update)
+  - Detailed validation error responses
+- API Documentation with Swagger UI:
+  - Interactive API documentation at `/swagger-ui.html`
+  - OpenAPI specification at `/api-docs`
+  - Detailed schema information for all models
+  - Authentication support in Swagger UI
 - Maven build configuration
 - Unit tests for controllers and security
 
@@ -130,6 +139,22 @@ Or:
 ```
 
 ### Changelog
+
+#### v0.7-swagger
+
+- Added SpringDoc OpenAPI for API documentation
+- Configured Swagger UI with JWT and Basic Auth security schemes
+- Added detailed API documentation annotations to all controllers
+- Added schema documentation to all model classes
+- Configured security to allow access to Swagger UI endpoints
+
+#### v0.6-validation
+
+- Added Jakarta Validation annotations to models
+- Implemented input validation for all create and update operations
+- Created validation groups for different operations (Create vs Update)
+- Enhanced error handling for validation errors
+- Made password required only for create operations
 
 #### v0.5-errors
 
