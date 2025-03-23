@@ -1,11 +1,31 @@
 package com.example.testapispring.model;
 
+import com.example.testapispring.validation.ValidationGroups;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
+
 public class Product {
     private Long id;
+    
+    @NotBlank(message = "Nazwa produktu jest wymagana", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 2, max = 100, message = "Nazwa produktu musi mieć od 2 do 100 znaków", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
     private String name;
+    
+    @Size(max = 500, message = "Opis nie może przekraczać 500 znaków", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
     private String description;
+    
+    @NotNull(message = "Cena jest wymagana", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Min(value = 0, message = "Cena nie może być ujemna", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
     private Double price;
+    
+    @NotBlank(message = "Kategoria jest wymagana", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
+    @Size(min = 2, max = 50, message = "Kategoria musi mieć od 2 do 50 znaków", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
     private String category;
+    
+    @NotNull(message = "Status dostępności jest wymagany", groups = {Default.class, ValidationGroups.Create.class, ValidationGroups.Update.class})
     private Boolean inStock;
 
     public Product() {
